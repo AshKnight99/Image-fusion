@@ -38,6 +38,7 @@ def get_subdirs(canon_dir=get_img_dir(), print_subdirectories=False):
     return directories
 
 def get_img_sets(canon_dir=get_img_dir(), print_subdirectories=False):
+    # saves colour, thermal
     directories = [ name for name in listdir(canon_dir) if isdir(join(canon_dir, name)) ]
 
     if print_subdirectories == True:
@@ -51,7 +52,7 @@ def get_img_sets(canon_dir=get_img_dir(), print_subdirectories=False):
         file_list = [filename for filename in file_list if '.jpg' in filename]
         image_set_filenames[directory] = file_list
         
-    return image_set_filenames#color_img_filenames, thermal_img_filenames
+    return image_set_filenames     #color_img_filenames, thermal_img_filenames
 
 def create_dir(directory, to_create):
     if not exists(directory + to_create):

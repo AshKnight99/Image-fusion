@@ -12,6 +12,7 @@ def therm_avg(rgb, thermal):
     avg_therm = avg_image(thermal)
 
     # create empty array, populate for new image
+    # print(rgb.shape[2])
     rgbArray = np.zeros((rgb.shape[0],rgb.shape[1],3), 'uint8')
     rgbArray[..., 0] = avg_mat(R, avg_therm)
     rgbArray[..., 1] = avg_mat(G, avg_therm)
@@ -38,6 +39,7 @@ def thresh_layers_by_thermal(rgb, thermal, thresh=25):
 
 def repl_val_with_therm(rgb, thermal):
     # Split RGB values, note: drop of alpha layer
+    # What is HSV: hue,saturation, value - works with lumonisty
     img_hsv = rgb2hsv(rgb)*255
     avg_therm = avg_image(thermal)
     
@@ -54,7 +56,7 @@ def repl_val_with_therm(rgb, thermal):
     
     # print(np.amax(hsv2rgb(newHSV)))
     
-    return img_as_ubyte(hsv2rgb(newHSV))
+    return img_as_ubyte(hsv2rgb(newHSV)) #in byte values - *255 
 
 def repl_light_with_therm(rgb, thermal, illuminant='D65'):
     '''
@@ -66,21 +68,22 @@ def repl_light_with_therm(rgb, thermal, illuminant='D65'):
     
     L,A,B = split_layers_to_3(img_lab)
     
-    # set range to fit in LAB L range (0-100)
+    # set range to fit in LAB L range (0-100)  
+    # X-axis: min value to max-value of average array, , Y- axis : 0-100
     avg_therm_scaled = np.interp(avg_therm, 
                        (avg_therm.min(), 
                         avg_therm.max()), 
                        (0, 100))
               
-    # print(np.amax(avg_therm_scaled))
+    print("\n Avg_thermal_scaled amax : "np.amax(avg_therm_scaled))
     # print(np.amin(avg_therm_scaled))
 
 
     # create empty array, populate for new image
     newLAB = np.zeros((rgb.shape[0],rgb.shape[1],3))
-    newLAB[:,:, 0] = avg_therm_scaled
-    newLAB[:,:, 1] = A
-    newLAB[:,:, 2] = B
+    newLAB[:,:, 0] = avg_therm_scaled #L
+    newLAB[:,:, 1] = A #G
+    newLAB[:,:, 2] = B #B
     
     newRGB = lab2rgb(newLAB)
     return img_as_ubyte(newRGB)
